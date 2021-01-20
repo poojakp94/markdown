@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
+function getWindowDimensions() {
+  const { innerWidth: width } = window;
+  return {
+    width
+  };
+}
+
+function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
+}
+
 function App() {
   const markdown = `
 # Welcome to my React Markdown Previewer!
@@ -51,16 +73,18 @@ And here. | Okay. | I think we get it.
   const [data, setData] = useState(markdown);
   const [isEditorMaximized, updateEditor] = useState(false);
   const [isPreviewMaximized, updatePreview] = useState(false);
+  const {width} = useWindowDimensions();
   
   useEffect(()=> {
     document.getElementById("preview").innerHTML = window.marked(data)
   }, [data])
   return (
     <div className="App">
+      <h1 style={{color: "white"}}>Markdown Previewer</h1>
       <div 
         style={
-          {height: isEditorMaximized ? '100vh' : '300px',
-        width: isEditorMaximized ? '100%' : '500px',
+          {height: isEditorMaximized ? '100vh' : '400px',
+        width: width < 768? '300px' : isEditorMaximized ? '100%' : '500px',
         marginBottom: isEditorMaximized ? '0px' : '50px',
         display: isPreviewMaximized ? 'none' : 'flex',
         flexDirection: 'column',
@@ -84,10 +108,11 @@ And here. | Okay. | I think we get it.
       </div>
       <div style={
         {minHeight: '200px',
-        width: isPreviewMaximized? '100%' : '800px',
+        width: width < 768? '350px' : isPreviewMaximized? '100%' : '800px',
         display: isEditorMaximized ? 'none' : 'flex',
         flexDirection: 'column',
-        boxShadow : '1px 1px 15px 1px #333' }
+        boxShadow : '1px 1px 15px 1px #333'
+         }
       }>
         <nav className="nav-bar">
         <p>Preview</p>
