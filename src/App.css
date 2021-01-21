@@ -33,10 +33,10 @@
 
 
 #preview {
-   flex-grow: 1;
+  flex-grow: 1;
   background: #e4f9ff;
   padding: 10px;
-  word-wrap: break-word;
+  overflow: auto;
 } 
 
 i:hover {
